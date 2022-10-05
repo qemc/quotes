@@ -1,8 +1,12 @@
 import redis
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class ApplicationConfig():
 
-    SECRET_KEY = '6be575743c714c0250e548de'
+    SECRET_KEY = os.environ["SECRET_KEY"]
 
     SQLALCHEMY_DATABASE_URI =  'sqlite:///db.db'    
     SQLALCHEMY_TRACK_MODIFICATIONS = False

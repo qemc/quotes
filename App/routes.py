@@ -1,4 +1,3 @@
-from genericpath import exists
 from App import app
 from App import db
 from App import bcrypt
@@ -7,15 +6,18 @@ from flask import jsonify, request, session
 import random
 
 
-@app.route('/@me', methods=['GET'])
-def get_user():
+@app.route("/@me")
+def get_current_user():
+    user_id = session.get("user_id")
 
-    user_id = session.get('user_id')
+    print("xxxxxxxxxxxxxxxxxxxxxxxxx")
+    print(session["user_id"])
 
-    user = User.query.filter_by(id=user_id).first()
 
     if not user_id:
-        return jsonify({"error": "Unauthorized XDDDDDD"}), 401
+        return jsonify({"error": "Unauthorized me"}), 401
+    
+    user = User.query.filter_by(id=user_id).first()
 
     return jsonify({
         'username': user.username,
@@ -61,10 +63,15 @@ def register():
 
     new_user = User(username=username, email=email, password=password_hash)
 
+
+
     db.session.add(new_user)
     db.session.commit()
 
     session["user_id"] = new_user.id
+    
+    print("---------------------------")
+    print(session["user_id"])
 
     return jsonify({
         'username': new_user.username,
@@ -97,6 +104,8 @@ def login():
             "error": "unauthorized"
         }), 401
 
+
+
     if not bcrypt.check_password_hash(user.password, password):
         return jsonify({
             "error": "unauthorized"
@@ -104,6 +113,7 @@ def login():
         }), 401
 
     session["user_id"] = user.id
+    
 
     return jsonify({
         'username': user.username,
